@@ -8,17 +8,20 @@ from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 
+TUBES = ["tube_red", "tube_green", "tube_blue"]
+
 
 def generate_launch_description():
     pkg = get_package_share_directory("lab_teleop")
     xacro_file = os.path.join(pkg, "urdf", "panda_gz.urdf.xacro")
+    world_file = os.path.join(pkg, "worlds", "lab.sdf")
     robot_description = ParameterValue(Command(["xacro ", xacro_file]), value_type=str)
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory("ros_gz_sim"), "launch", "gz_sim.launch.py")
         ),
-        launch_arguments={"gz_args": "-r empty.sdf"}.items(),
+        launch_arguments={"gz_args": "-r " + world_file}.items(),
     )
 
     robot_state_publisher = Node(
@@ -28,10 +31,16 @@ def generate_launch_description():
         output="screen",
     )
 
-    clock_bridge = Node(
+    bridge_args = ["/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock"]
+    for t in TUBES:
+        bridge_args.append(f"/model/{t}/pose@geometry_msgs/msg/PoseStamped[gz.msgs.Pose")
+        bridge_args.append(f"/grasp/{t}/attach@std_msgs/msg/Empty]gz.msgs.Empty")
+        bridge_args.append(f"/grasp/{t}/detach@std_msgs/msg/Empty]gz.msgs.Empty")
+
+    bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
-        arguments=["/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock"],
+        arguments=bridge_args,
         output="screen",
     )
 
@@ -50,7 +59,7 @@ def generate_launch_description():
     return LaunchDescription([
         gazebo,
         robot_state_publisher,
-        clock_bridge,
+        bridge,
         spawn,
         RegisterEventHandler(OnProcessExit(target_action=spawn, on_exit=controllers)),
     ])

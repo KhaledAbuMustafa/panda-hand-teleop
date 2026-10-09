@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="grasp_joint" params="tube">
+    <gazebo>
+      <plugin filename="gz-sim-detachable-joint-system" name="gz::sim::systems::DetachableJoint">
+        <parent_link>panda_link7</parent_link>
+        <child_model>${tube}</child_model>
+        <child_link>link</child_link>
+        <attach_topic>/grasp/${tube}/attach</attach_topic>
+        <detach_topic>/grasp/${tube}/detach</detach_topic>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:grasp_joint tube="tube_red"/>
+  <xacro:grasp_joint tube="tube_green"/>
+  <xacro:grasp_joint tube="tube_blue"/>
+
+</robot>

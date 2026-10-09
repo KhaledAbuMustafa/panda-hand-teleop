@@ -51,4 +51,5 @@
     </plugin>
   </gazebo>
 
+  <xacro:include filename="$(find lab_teleop)/urdf/grasp.xacro"/>
 </robot>
