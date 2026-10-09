@@ -4,7 +4,7 @@
   <name>lab_teleop</name>
   <version>0.0.0</version>
   <description>Hand-tracking teleoperation of a Franka Panda arm in Gazebo for lab automation (ROS 2 Jazzy, MoveIt Servo, MediaPipe)</description>
-  <maintainer email="deine@mail.de">khale</maintainer>
+  <maintainer email="khaled.abu-mustafa@web.de">Khaled Abu-Mustafa</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
