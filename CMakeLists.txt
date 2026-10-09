@@ -7,4 +7,8 @@ install(DIRECTORY launch urdf config worlds
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(PROGRAMS scripts/hand_servo.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()

@@ -1,6 +1,6 @@
 import os
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction, ExecuteProcess
+from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_param_builder import ParameterBuilder
@@ -43,9 +43,10 @@ def generate_launch_description():
         output="screen",
     )
 
-    hand_node = ExecuteProcess(
-        cmd=["python3", os.path.expanduser("~/hand_teleop/hand_servo.py"),
-             "--ros-args", "-p", "use_sim_time:=true"],
+    hand_node = Node(
+        package="lab_teleop",
+        executable="hand_servo.py",
+        parameters=[{"use_sim_time": True}],
         output="screen",
     )
 
