@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda">
+
+  <xacro:include filename="$(find moveit_resources_panda_description)/urdf/panda.urdf.xacro"/>
+
+  <link name="world"/>
+  <joint name="world_joint" type="fixed">
+    <parent link="world"/>
+    <child link="panda_link0"/>
+  </joint>
+
+  <xacro:property name="init" value="${xacro.load_yaml('$(find lab_teleop)/config/initial_positions.yaml')['initial_positions']}"/>
+
+  <xacro:macro name="arm_joint" params="name">
+    <joint name="${name}">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">${init[name]}</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <xacro:arm_joint name="panda_joint1"/>
+    <xacro:arm_joint name="panda_joint2"/>
+    <xacro:arm_joint name="panda_joint3"/>
+    <xacro:arm_joint name="panda_joint4"/>
+    <xacro:arm_joint name="panda_joint5"/>
+    <xacro:arm_joint name="panda_joint6"/>
+    <xacro:arm_joint name="panda_joint7"/>
+    <joint name="panda_finger_joint1">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.04</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="panda_finger_joint2">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find lab_teleop)/config/ros2_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
